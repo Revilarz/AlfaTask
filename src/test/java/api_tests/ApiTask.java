@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- *Сформируйте проект с тестами, который будет вызывать API Яндекс.Погоды для города
+ * Сформируйте проект с тестами, который будет вызывать API Яндекс.Погоды для города
  * Москва. Прогноз погоды запрашивайте всего на два дня. Получив ответ от API сделайте
  * следующие проверки:
  * 1. lat - широта (в градусах) соответствует заданной вами;
@@ -75,6 +75,12 @@ public class ApiTask {
      * Срок прогноза (указываемые в запросе)
      */
     private static int limit = 2;
+
+
+    /**
+     * Номер дня для проверки - moon_code соответсвует текстовому коду moon_text?
+     */
+    private static int i = 2;
 
 
     /**
@@ -187,8 +193,33 @@ public class ApiTask {
      */
     @Test
     public void checkMoonCodeAndMoonText() {
-
+        //я бы проверил каждый день )
+        //List<String> jsonResponse = jsonPathValidator().get("forecasts.moon_code");
+        //for (int i = 0; i < jsonResponse.size(); i++) {
+        i--;
+        int moonCode = (jsonPathValidator().get("forecasts.moon_code" + "[" + i + "]"));
+        if (moonCode == 0) {
+            Assert.assertEquals(jsonPathValidator().get("forecasts.moon_text" + "[" + i + "]"), "full-moon");
+        } else {
+            if (moonCode == 4) {
+                Assert.assertEquals(jsonPathValidator().get("forecasts.moon_text" + "[" + i + "]"), "last-quarter");
+            } else {
+                if (moonCode == 8) {
+                    Assert.assertEquals(jsonPathValidator().get("forecasts.moon_text" + "[" + i + "]"), "new-moon");
+                } else {
+                    if (moonCode == 12) {
+                        Assert.assertEquals(jsonPathValidator().get("forecasts.moon_text" + "[" + i + "]"), "first-quarter");
+                    } else {
+                        if ((moonCode >= 1) && (moonCode <= 7)) {
+                            Assert.assertEquals(jsonPathValidator().get("forecasts.moon_text" + "[" + i + "]"), "decreasing-moon");
+                        } else {
+                            Assert.assertEquals(jsonPathValidator().get("forecasts.moon_text" + "[" + i + "]"), "growing-moon");
+                        }
+                    }
+                }
+            }
+            //для проверки
+            //System.out.println((jsonPathValidator().get("forecasts.moon_text"+"["+i+"]")).toString());
+        }
     }
-
-
 }
